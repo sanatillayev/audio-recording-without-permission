@@ -1,0 +1,38 @@
+#  XcodeGen spec — generate the project with:  xcodegen generate
+#  (brew install xcodegen)  then open MicPrivacyProbe.xcodeproj
+name: MicPrivacyProbe
+options:
+  bundleIdPrefix: com.example.micprivacyprobe
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  MicPrivacyProbe:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: MicPrivacyProbe
+        UILaunchScreen: {}
+        # Required for the RemoteIO input path to initialize at all (the CVE
+        # writeup notes AudioUnitInitialize aborts without this key). Declaring
+        # it does NOT grant permission — that is the whole point of the test.
+        NSMicrophoneUsageDescription: >-
+          This build is a security regression test. It attempts to open the
+          microphone and verifies the OS blocks capture when permission is not
+          granted. It records nothing to disk.
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.micprivacyprobe
+        # NOTE: no private entitlements are requested. A correctly patched OS
+        # gates the property-2009 override behind the kernel audit-token check
+        # and com.apple.private.audio.client-audit-token-override, which a normal
+        # app like this cannot hold.
